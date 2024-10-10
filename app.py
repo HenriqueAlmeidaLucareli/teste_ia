@@ -4,7 +4,7 @@ import joblib
 app = Flask(__name__)
 
 # Carregar seu modelo previamente treinado
-modelo = joblib.load('seu_modelo.pkl')  # Substitua pelo caminho do seu modelo
+modelo = joblib.load('pipeline.pkl')  # Substitua pelo caminho do seu modelo
 
 @app.route('/')
 def home():
