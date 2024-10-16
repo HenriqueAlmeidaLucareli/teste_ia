@@ -22,7 +22,7 @@ def predict():
     tipo_residuo = request.form.get('tipo_residuo')
     metodo_reciclagem = request.form.get('metodo_reciclagem')
     quantidade = request.form.get('quantidade')
-    unidade_medida = 'kilogramas' #request.form.get('unidade_medida')
+    unidade_medida = 'kilogramas' # request.form.get('unidade_medida')
     empresa_destinadora = request.form.get('empresa_destinadora')
 
     # Preparar os dados para predição
@@ -50,4 +50,4 @@ def predict():
     return jsonify({'resultado': resultado[0]})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
