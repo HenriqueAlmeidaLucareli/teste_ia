@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, jsonify
+from openpyxl import load_workbook
 import joblib
+import pandas as pd
 
 app = Flask(__name__)
 
-# Carregar seu modelo previamente treinado
-modelo = joblib.load('pipeline.pkl')  # Substitua pelo caminho do seu modelo
+# Carregar o modelo previamente treinado
+modelo = joblib.load('pipeline.pkl')
 
 @app.route('/')
 def home():
@@ -12,7 +14,7 @@ def home():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Capturando os dados do formulário
+    # Capturar os dados do formulário
     razao_social = request.form.get('razao_social')
     estado = request.form.get('estado')
     municipio = request.form.get('municipio')
@@ -20,19 +22,31 @@ def predict():
     tipo_residuo = request.form.get('tipo_residuo')
     metodo_reciclagem = request.form.get('metodo_reciclagem')
     quantidade = request.form.get('quantidade')
-    unidade_medida = request.form.get('unidade_medida')
+    unidade_medida = 'kilogramas' #request.form.get('unidade_medida')
     empresa_destinadora = request.form.get('empresa_destinadora')
 
-    # Preparar os dados para predição (ajuste conforme necessário)
+    # Preparar os dados para predição
     dados_entrada = [[
         razao_social, estado, municipio, ano, tipo_residuo,
         metodo_reciclagem, quantidade, unidade_medida, empresa_destinadora
     ]]
 
-    # Fazer a predição
-    resultado = modelo.predict(dados_entrada)
+    colunas = [
+        'Razão Social', 'Estado', 'Município', 'Ano', 'Tipo de Resíduo',
+        'Método de Reciclagem', 'Quantidade', 'Unidade de Medida', 'Empresa Destinadora do Resíduo'
+    ]
+    dados_entrada_df = pd.DataFrame(dados_entrada, columns=colunas)
 
-    # Retornar o resultado
+    # Fazer a predição
+    resultado = modelo.predict(dados_entrada_df)
+
+    # Verificar o resultado antes de retornar
+    print("Resultado da predição:", resultado)
+
+    # Adicionar a situação cadastral ao DataFrame
+    dados_entrada_df['Situação Cadastral'] = resultado
+
+    # Retornar o resultado da predição
     return jsonify({'resultado': resultado[0]})
 
 if __name__ == '__main__':
