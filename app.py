@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify
-from openpyxl import load_workbook
 import joblib
 import pandas as pd
 
@@ -15,15 +14,15 @@ def home():
 @app.route('/predict', methods=['POST'])
 def predict():
     # Capturar os dados do formulário
-    razao_social = request.form.get('razao_social')
-    estado = request.form.get('estado')
-    municipio = request.form.get('municipio')
-    ano = request.form.get('ano')
+    razao_social = request.form.get('razao_social').upper()
+    estado = request.form.get('estado').upper()
+    municipio = request.form.get('municipio').upper()
+    ano = request.form.get('ano').upper()
     tipo_residuo = request.form.get('tipo_residuo')
     metodo_reciclagem = request.form.get('metodo_reciclagem')
     quantidade = request.form.get('quantidade')
     unidade_medida = 'kilogramas' # request.form.get('unidade_medida')
-    empresa_destinadora = request.form.get('empresa_destinadora')
+    empresa_destinadora = request.form.get('empresa_destinadora').upper()
 
     # Preparar os dados para predição
     dados_entrada = [[
@@ -40,7 +39,6 @@ def predict():
     # Fazer a predição
     resultado = modelo.predict(dados_entrada_df)
 
-    # Verificar o resultado antes de retornar
     print("Resultado da predição:", resultado)
 
     # Adicionar a situação cadastral ao DataFrame
